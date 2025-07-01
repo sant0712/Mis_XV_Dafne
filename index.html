@@ -117,6 +117,73 @@
             }
         }
         
+        /* Estilos para el reproductor de audio */
+        .audio-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(106, 13, 173, 0.8);
+            border-radius: 50px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--gold);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .audio-player:hover {
+            transform: scale(1.05);
+            background: rgba(106, 13, 173, 0.9);
+        }
+        
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .play-pause-btn {
+            background: transparent;
+            border: none;
+            color: var(--gold);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .play-pause-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .volume-control {
+            width: 80px;
+            -webkit-appearance: none;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            outline: none;
+        }
+        
+        .volume-control::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            background: var(--gold);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -1131,6 +1198,16 @@
     </style>
 </head>
 <body>
+    <!-- Reproductor de audio -->
+    <div class="audio-player" id="audioPlayer">
+        <div class="audio-controls">
+            <button class="play-pause-btn" id="playPauseBtn">
+                <i class="fas fa-pause"></i>
+            </button>
+            <input type="range" class="volume-control" id="volumeControl" min="0" max="1" step="0.1" value="0.7">
+        </div>
+    </div>
+    
     <!-- Nueva sección hero con animación de scroll -->
     <section class="hero-main" id="mainHero">
         <div class="hero-bg"></div>
@@ -1148,10 +1225,11 @@
     <div class="gold-detail gold-detail-2"></div>
     <div class="gold-detail gold-detail-3"></div>
     
-    <audio autoplay loop>
+    <audio id="backgroundMusic" loop>
         <source src="Al Aire.mp3" type="audio/mpeg">
         Tu navegador no soporta el elemento de audio.
     </audio>
+    
     <div class="container">
         <header class="animate__animated animate__fadeIn">
             <div class="header-content">
@@ -1166,7 +1244,7 @@
         </header>
         
         <section class="hero-section animate__animated animate__fadeInUp animate__delay-4s">
-            <img src="f (13).jpeg " alt="Invitación XV Años" class="hero-image">
+            <img src="f (13).jpeg" alt="Invitación XV Años" class="hero-image">
             <div class="hero-overlay">
                 <h2 class="animate__animated animate__fadeInUp animate__delay-5s">Celebra conmigo este momento especial</h2>
             </div>
@@ -1178,6 +1256,7 @@
                 <p>Con cariño,<br>Dafne Michelle</p>
             </div>
         </section>
+        
         <section class="section animate__animated animate__fadeIn animate__delay-8s">
             <div class="countdown-container">
                 <h2>Faltan...</h2>
@@ -1248,6 +1327,9 @@
                             <option value="8">8 personas</option>
                             <option value="9">9 personas</option>
                             <option value="10">10 personas</option>
+                            <option value="11">11 personas</option>
+                            <option value="12">12 personas</option>
+                            <option value="13">13 personas</option>
                         </select>
                     </div>
                     
@@ -1376,6 +1458,67 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.js"></script>
     <script>
+        // Controlador del reproductor de audio
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const volumeControl = document.getElementById('volumeControl');
+        const audioPlayer = document.getElementById('audioPlayer');
+        
+        // Configurar el reproductor de audio
+        function setupAudioPlayer() {
+            // Configuramos el volumen inicial
+            backgroundMusic.volume = volumeControl.value;
+            
+            // Ocultar el reproductor inicialmente (se mostrará cuando el usuario interactúe)
+            audioPlayer.style.display = 'none';
+            
+            // Configuramos el evento para permitir la reproducción después de la interacción del usuario
+            document.body.addEventListener('click', function initAudio() {
+                // Solo intentamos reproducir una vez
+                document.body.removeEventListener('click', initAudio);
+                
+                // Mostramos el reproductor
+                audioPlayer.style.display = 'flex';
+                
+                // Intentamos reproducir
+                const playPromise = backgroundMusic.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                        // Reproducción iniciada automáticamente
+                        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    })
+                    .catch(error => {
+                        // Autoplay no permitido, mostramos el botón de play
+                        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    });
+                }
+            }, {once: true});
+        }
+        
+        // Control de play/pause
+        playPauseBtn.addEventListener('click', function() {
+            if (backgroundMusic.paused) {
+                backgroundMusic.play();
+                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                backgroundMusic.pause();
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        });
+        
+        // Control de volumen
+        volumeControl.addEventListener('input', function() {
+            backgroundMusic.volume = this.value;
+        });
+        
+        // Actualizar el botón cuando la música termina (por razones externas)
+        backgroundMusic.addEventListener('pause', function() {
+            if (backgroundMusic.paused) {
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        });
+        
         // Crear bolitas cayendo
         function createFallingBalls() {
             const container = document.getElementById('fallingBalls');
@@ -1442,7 +1585,7 @@
             const whatsappMessage = `Hola Dafne! Soy ${name}, confirmo mi asistencia a tus XV años con ${guests} invitado(s). ${message ? 'Mensaje: ' + message : ''}`;
             const encodedMessage = encodeURIComponent(whatsappMessage);
             
-            // Enviar al número 5632726520
+            // Enviar al número 5591000627
             window.open(`https://wa.me/525632726520?text=${encodedMessage}`, '_blank');
             
             // Reset form
@@ -1567,6 +1710,7 @@
         
         // Inicializar
         window.addEventListener('load', function() {
+            setupAudioPlayer();
             createFallingBalls();
             updateCountdown();
             handleScroll();
