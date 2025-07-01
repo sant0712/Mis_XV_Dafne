@@ -1313,7 +1313,7 @@
                         <input type="tel" id="phone" name="phone" class="form-input" required placeholder="Tu número de teléfono">
                     </div>
                     
-                    <div class="form-group">
+               <!--     <div class="form-group">
                         <label for="guests" class="form-label">Número de invitados</label>
                         <select id="guests" name="guests" class="form-input" required>
                             <option value="" disabled selected>Selecciona</option>
@@ -1331,7 +1331,7 @@
                             <option value="12">12 personas</option>
                             <option value="13">13 personas</option>
                         </select>
-                    </div>
+                    </div> -->
                     
                     <div class="form-group">
                         <label for="message" class="form-label">Mensaje (opcional)</label>
@@ -1582,7 +1582,7 @@
             const guests = document.getElementById("guests").value;
             const message = document.getElementById("message").value;
             
-            const whatsappMessage = `Hola Dafne! Soy ${name}, confirmo mi asistencia a tus XV años con ${guests} invitado(s). ${message ? 'Mensaje: ' + message : ''}`;
+            const whatsappMessage = `Hola Dafne! Soy ${name}, confirmo mi asistencia a tus XV años. ${message ? 'Mensaje: ' + message : ''}`;
             const encodedMessage = encodeURIComponent(whatsappMessage);
             
             // Enviar al número 5591000627
@@ -1626,7 +1626,7 @@
             }
             
             // Mostrar overlay cuando se llega al 30% del documento
-            if (scrollPosition > documentHeight * 0.3 && !overlayShown) {
+            if (scrollPosition > documentHeight * 0.4 && !overlayShown) {
                 scrollOverlay.style.opacity = '1';
                 overlayContent.style.transform = 'translateY(0)';
                 overlayShown = true;
@@ -1638,8 +1638,8 @@
                 }, 3000);
             }
             
-            // Permitir mostrar de nuevo cuando se llega al 70%
-            if (scrollPosition > documentHeight * 0.7) {
+            // Permitir mostrar de nuevo cuando se llega al 90%
+            if (scrollPosition > documentHeight * 0.9) {
                 overlayShown = false;
             }
             
